@@ -46,4 +46,10 @@ public class UserDataFactory {
 
         return user;
     }
+
+    public static UserModel userInvalidPhone() {
+        UserModel user = newUser();
+        user.setPhone("abcd");
+        return user;
+    }
 }

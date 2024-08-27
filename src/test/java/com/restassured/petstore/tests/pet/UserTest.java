@@ -75,4 +75,17 @@ public class UserTest {
 
         Assertions.assertEquals("All fields are required", message);
     }
+
+    // BUG: O sistema, ao cadastrar usuario informando numero de telefone invalido, retorna status 200 diferente do comportamento esperado.
+    @Test
+    public void testTentarCadastrarUsuarioComTelefoneInvalido() {
+        UserModel user = UserDataFactory.userInvalidPhone();
+
+        String message = userClient.postUser(user)
+                .then()
+                .statusCode(400)
+                .extract().path("message");
+
+        Assertions.assertEquals("Please enter a valid phone number", message);
+    }
 }
