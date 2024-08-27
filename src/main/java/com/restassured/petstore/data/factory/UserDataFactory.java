@@ -17,6 +17,21 @@ public class UserDataFactory {
         return user;
     }
 
+    public static UserModel userEmptyFields() {
+        UserModel user = new UserModel();
+
+        user.setId(faker.number().numberBetween(10000L, 15000L));
+        user.setUsername("");
+        user.setFirstName("");
+        user.setLastName("");
+        user.setEmail("");
+        user.setPassword("");
+        user.setPhone("");
+        user.setUserStatus(0);
+
+        return user;
+    }
+
     private static UserModel newUser() {
         UserModel user = new UserModel();
 

@@ -50,7 +50,7 @@ public class UserTest {
         Assertions.assertEquals(200, codeMessage);
     }
 
-    // BUG: O sistema permite cadastrar usuario informando Username como null, diferente do comportamento esperado.
+    // BUG: O sistema, ao cadastrar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
     @Test
     public void testTentarCadastrarUsuarioComUsernameNulo() {
         UserModel user = UserDataFactory.userNullUsername();
@@ -61,5 +61,18 @@ public class UserTest {
                 .extract().path("message");
 
         Assertions.assertEquals("Please enter a valid username", message);
+    }
+
+    // BUG: O sistema, ao cadastrar usuario informando campos vazios, retorna status 200 diferente do comportamento esperado.
+    @Test
+    public void testTentarCadastrarUsuarioComDadosVazios() {
+        UserModel user = UserDataFactory.userEmptyFields();
+
+        String message = userClient.postUser(user)
+                .then()
+                .statusCode(400)
+                .extract().path("message");
+
+        Assertions.assertEquals("All fields are required", message);
     }
 }
