@@ -46,6 +46,20 @@ public class UserTest {
                 .statusCode(200)
                 .extract().path("code");
 
+
         Assertions.assertEquals(200, codeMessage);
+    }
+
+    // BUG: O sistema permite cadastrar usuario informando Username como null, diferente do comportamento esperado.
+    @Test
+    public void testTentarCadastrarUsuarioComUsernameNulo() {
+        UserModel user = UserDataFactory.userNullUsername();
+
+        String message = userClient.postUser(user)
+            .then()
+                .statusCode(400)
+                .extract().path("message");
+
+        Assertions.assertEquals("Please enter a valid username", message);
     }
 }

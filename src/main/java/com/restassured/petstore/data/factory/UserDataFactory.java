@@ -11,6 +11,12 @@ public class UserDataFactory {
         return newUser();
     }
 
+    public static UserModel userNullUsername() {
+        UserModel user = newUser();
+        user.setUsername(null);
+        return user;
+    }
+
     private static UserModel newUser() {
         UserModel user = new UserModel();
 
