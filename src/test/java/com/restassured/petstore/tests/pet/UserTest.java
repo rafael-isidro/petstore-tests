@@ -92,12 +92,39 @@ public class UserTest {
     public void testEditarUsuarioComSucesso() {
         UserModel newUser = UserDataFactory.validUser();
         newUser.setId(user.getId());
+
         String message = userClient.putUser(user, newUser)
             .then()
-                .log().all()
                 .statusCode(200)
                 .extract().path("message");
 
         Assertions.assertEquals(newUser.getId().toString(), message);
+    }
+
+    // BUG: O sistema, ao cadastrar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
+    @Test
+    public void testTentarEditarUsuarioComUsernameNulo() {
+        UserModel newUser = UserDataFactory.userNullUsername();
+        newUser.setId(user.getId());
+
+        String message = userClient.putUser(user, newUser)
+            .then()
+                .statusCode(400)
+                .extract().path("message");
+
+        Assertions.assertEquals("Please enter a valid username", message);
+    }
+
+    // BUG: O sistema, ao editar usuario informando campos vazios, retorna status 200 diferente do comportamento esperado.
+    @Test
+    public void testTentarEditarUsuarioComDadosVazios() {
+        UserModel newUser = UserDataFactory.userEmptyFields();
+
+        String message = userClient.putUser(user, newUser)
+                .then()
+                .statusCode(400)
+                .extract().path("message");
+
+        Assertions.assertEquals("All fields are required", message);
     }
 }
