@@ -142,7 +142,6 @@ public class UserTest {
     public void testTentarExcluirUsuarioComUsernameNaoCadastrado() {
         userClient.deleteUserByUsernameNaoCadastrado()
             .then()
-                .log().all()
                 .statusCode(404);
     }
 }
