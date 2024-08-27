@@ -41,13 +41,12 @@ public class UserTest {
     public void testCadastrarUsuarioComSucesso() {
         UserModel user = UserDataFactory.validUser();
 
-        Integer codeMessage = userClient.postUser(user)
+        String message = userClient.postUser(user)
             .then()
                 .statusCode(200)
-                .extract().path("code");
+                .extract().path("message");
 
-
-        Assertions.assertEquals(200, codeMessage);
+        Assertions.assertEquals(user.getId().toString(), message);
     }
 
     // BUG: O sistema, ao cadastrar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
@@ -69,7 +68,7 @@ public class UserTest {
         UserModel user = UserDataFactory.userEmptyFields();
 
         String message = userClient.postUser(user)
-                .then()
+            .then()
                 .statusCode(400)
                 .extract().path("message");
 
@@ -82,10 +81,23 @@ public class UserTest {
         UserModel user = UserDataFactory.userInvalidPhone();
 
         String message = userClient.postUser(user)
-                .then()
+            .then()
                 .statusCode(400)
                 .extract().path("message");
 
         Assertions.assertEquals("Please enter a valid phone number", message);
+    }
+
+    @Test
+    public void testEditarUsuarioComSucesso() {
+        UserModel newUser = UserDataFactory.validUser();
+        newUser.setId(user.getId());
+        String message = userClient.putUser(user, newUser)
+            .then()
+                .log().all()
+                .statusCode(200)
+                .extract().path("message");
+
+        Assertions.assertEquals(newUser.getId().toString(), message);
     }
 }

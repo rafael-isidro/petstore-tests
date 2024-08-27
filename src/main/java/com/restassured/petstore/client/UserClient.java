@@ -10,7 +10,7 @@ public class UserClient extends BaseClient {
 
     private final String USERNAME_NAO_CADASTRADO = "XYZ120###AA";
     private final String USER ="/user";
-    private final String USER_BY_ID ="/user/{username}";
+    private final String USER_BY_USERNAME ="/user/{username}";
 
     public Response getUserByUsername(String username) {
         return
@@ -18,7 +18,7 @@ public class UserClient extends BaseClient {
                 .spec(super.set())
                 .pathParams("username", username)
                 .when()
-                .get(USER_BY_ID);
+                .get(USER_BY_USERNAME);
     }
 
     public Response postUser(UserModel user) {
@@ -37,6 +37,17 @@ public class UserClient extends BaseClient {
                 .spec(super.set())
                 .pathParams("username", USERNAME_NAO_CADASTRADO)
             .when()
-                .get(USER_BY_ID);
+                .get(USER_BY_USERNAME);
+    }
+
+    public Response putUser(UserModel user, UserModel newUser) {
+        return
+            given()
+                .spec(super.set())
+                .contentType(ContentType.JSON)
+                .pathParams("username", user.getUsername())
+                .body(newUser)
+            .when()
+                .put(USER_BY_USERNAME);
     }
 }
