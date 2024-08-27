@@ -60,4 +60,14 @@ public class UserClient extends BaseClient {
             .when()
                 .delete(USER_BY_USERNAME);
     }
+
+    public Response deleteUserByUsernameNaoCadastrado() {
+        return
+            given()
+                .spec(super.set())
+                .contentType(ContentType.JSON)
+                .pathParams("username", USERNAME_NAO_CADASTRADO)
+            .when()
+                .delete(USER_BY_USERNAME);
+    }
 }

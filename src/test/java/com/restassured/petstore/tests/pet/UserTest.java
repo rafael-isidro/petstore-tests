@@ -137,4 +137,12 @@ public class UserTest {
 
         Assertions.assertEquals(user.getUsername(), message);
     }
+
+    @Test
+    public void testTentarExcluirUsuarioComUsernameNaoCadastrado() {
+        userClient.deleteUserByUsernameNaoCadastrado()
+            .then()
+                .log().all()
+                .statusCode(404);
+    }
 }
