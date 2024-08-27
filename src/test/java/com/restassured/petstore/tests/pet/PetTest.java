@@ -3,7 +3,7 @@ package com.restassured.petstore.tests.pet;
 import com.restassured.petstore.client.PetClient;
 import org.junit.jupiter.api.Test;
 
-public class PetGetTest {
+public class PetTest {
 
     static PetClient petClient = new PetClient();
 

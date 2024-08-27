@@ -11,7 +11,7 @@ public class UserDataFactory {
         return newUser();
     }
 
-    public static UserModel newUser() {
+    private static UserModel newUser() {
         UserModel user = new UserModel();
 
         user.setId(faker.number().numberBetween(10000L, 15000L));

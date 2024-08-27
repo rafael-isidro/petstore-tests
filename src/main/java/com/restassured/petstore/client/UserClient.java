@@ -8,15 +8,15 @@ import static io.restassured.RestAssured.*;
 
 public class UserClient extends BaseClient {
 
-    private static final String VALID_USERNAME = "john1234";
+    private final String USERNAME_NAO_CADASTRADO = "XYZ120###AA";
     private final String USER ="/user";
     private final String USER_BY_ID ="/user/{username}";
 
-    public Response getUserByUsername() {
+    public Response getUserByUsername(String username) {
         return
             given()
                 .spec(super.set())
-                .pathParams("username", VALID_USERNAME)
+                .pathParams("username", username)
                 .when()
                 .get(USER_BY_ID);
     }
@@ -29,5 +29,14 @@ public class UserClient extends BaseClient {
                 .body(user)
             .when()
                 .post(USER);
+    }
+
+    public Response getUserByUsernameNaoCadastrado() {
+        return
+            given()
+                .spec(super.set())
+                .pathParams("username", USERNAME_NAO_CADASTRADO)
+            .when()
+                .get(USER_BY_ID);
     }
 }
