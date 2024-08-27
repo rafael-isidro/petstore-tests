@@ -50,4 +50,14 @@ public class UserClient extends BaseClient {
             .when()
                 .put(USER_BY_USERNAME);
     }
+
+    public Response deleteUser(UserModel user) {
+        return
+            given()
+                .spec(super.set())
+                .contentType(ContentType.JSON)
+                .pathParams("username", user.getUsername())
+            .when()
+                .delete(USER_BY_USERNAME);
+    }
 }

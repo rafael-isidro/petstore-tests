@@ -101,7 +101,7 @@ public class UserTest {
         Assertions.assertEquals(newUser.getId().toString(), message);
     }
 
-    // BUG: O sistema, ao cadastrar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
+    // BUG: O sistema, ao editar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
     @Test
     public void testTentarEditarUsuarioComUsernameNulo() {
         UserModel newUser = UserDataFactory.userNullUsername();
@@ -121,10 +121,20 @@ public class UserTest {
         UserModel newUser = UserDataFactory.userEmptyFields();
 
         String message = userClient.putUser(user, newUser)
-                .then()
+            .then()
                 .statusCode(400)
                 .extract().path("message");
 
         Assertions.assertEquals("All fields are required", message);
+    }
+
+    @Test
+    public void testExcluirUsuarioComSucesso() {
+        String message = userClient.deleteUser(user)
+            .then()
+                .statusCode(200)
+                .extract().path("message");
+
+        Assertions.assertEquals(user.getUsername(), message);
     }
 }
