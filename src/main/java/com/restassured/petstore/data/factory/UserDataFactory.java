@@ -17,10 +17,16 @@ public class UserDataFactory {
         return user;
     }
 
+    public static UserModel userNullPassword() {
+        UserModel user = newUser();
+        user.setPassword(null);
+        return user;
+    }
+
     public static UserModel userEmptyFields() {
         UserModel user = new UserModel();
 
-        user.setId(faker.number().numberBetween(10000L, 15000L));
+        user.setId(faker.number().numberBetween(10000, 25000));
         user.setUsername("");
         user.setFirstName("");
         user.setLastName("");
@@ -35,7 +41,7 @@ public class UserDataFactory {
     private static UserModel newUser() {
         UserModel user = new UserModel();
 
-        user.setId(faker.number().numberBetween(10000L, 15000L));
+        user.setId(faker.number().numberBetween(10000, 25000));
         user.setUsername(faker.name().username());
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
@@ -50,6 +56,8 @@ public class UserDataFactory {
     public static UserModel userInvalidPhone() {
         UserModel user = newUser();
         user.setPhone("abcd");
+
         return user;
     }
+
 }

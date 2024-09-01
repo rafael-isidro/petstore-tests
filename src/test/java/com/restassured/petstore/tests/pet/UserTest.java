@@ -3,6 +3,8 @@ package com.restassured.petstore.tests.pet;
 import com.restassured.petstore.client.UserClient;
 import com.restassured.petstore.data.factory.UserDataFactory;
 import com.restassured.petstore.model.UserModel;
+import com.restassured.petstore.model.response.UserResponse;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,21 +19,21 @@ public class UserTest {
     void setUp() {
         userClient.postUser(user)
             .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     public void testBuscarUserPorUsernameComSucesso() {
         userClient.getUserByUsername(user.getUsername())
             .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     public void testTentarBuscarUserPorUsernameNaoCadastrado() {
         String message = userClient.getUserByUsernameNaoCadastrado()
             .then()
-                .statusCode(404)
+                .statusCode(HttpStatus.SC_NOT_FOUND)
                 .extract().path("message");
 
         Assertions.assertEquals("User not found", message);
@@ -41,12 +43,12 @@ public class UserTest {
     public void testCadastrarUsuarioComSucesso() {
         UserModel user = UserDataFactory.validUser();
 
-        String message = userClient.postUser(user)
+        UserResponse response = userClient.postUser(user)
             .then()
-                .statusCode(200)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_OK)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals(user.getId().toString(), message);
+        Assertions.assertEquals(user.getId().toString(), response.getMessage());
     }
 
     // BUG: O sistema, ao cadastrar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
@@ -54,12 +56,14 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComUsernameNulo() {
         UserModel user = UserDataFactory.userNullUsername();
 
-        String message = userClient.postUser(user)
+        UserResponse response = userClient.postUser(user)
             .then()
-                .statusCode(400)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .log().all()
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals("Please enter a valid username", message);
+        Assertions.assertEquals("Please enter a valid username", response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
     }
 
     // BUG: O sistema, ao cadastrar usuario informando campos vazios, retorna status 200 diferente do comportamento esperado.
@@ -67,12 +71,13 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComDadosVazios() {
         UserModel user = UserDataFactory.userEmptyFields();
 
-        String message = userClient.postUser(user)
+        UserResponse response = userClient.postUser(user)
             .then()
-                .statusCode(400)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals("All fields are required", message);
+        Assertions.assertEquals("All fields are required", response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
     }
 
     // BUG: O sistema, ao cadastrar usuario informando numero de telefone invalido, retorna status 200 diferente do comportamento esperado.
@@ -80,12 +85,13 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComTelefoneInvalido() {
         UserModel user = UserDataFactory.userInvalidPhone();
 
-        String message = userClient.postUser(user)
+        UserResponse response = userClient.postUser(user)
             .then()
-                .statusCode(400)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals("Please enter a valid phone number", message);
+        Assertions.assertEquals("Please enter a valid phone number", response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
     }
 
     @Test
@@ -93,12 +99,13 @@ public class UserTest {
         UserModel newUser = UserDataFactory.validUser();
         newUser.setId(user.getId());
 
-        String message = userClient.putUser(user, newUser)
+        UserResponse response = userClient.putUser(user, newUser)
             .then()
-                .statusCode(200)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_OK)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals(newUser.getId().toString(), message);
+        Assertions.assertEquals(newUser.getId().toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_OK, response.getCode());
     }
 
     // BUG: O sistema, ao editar usuario informando Username como null, retorna status 200 diferente do comportamento esperado.
@@ -107,12 +114,13 @@ public class UserTest {
         UserModel newUser = UserDataFactory.userNullUsername();
         newUser.setId(user.getId());
 
-        String message = userClient.putUser(user, newUser)
+        UserResponse response = userClient.putUser(user, newUser)
             .then()
-                .statusCode(400)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals("Please enter a valid username", message);
+        Assertions.assertEquals("Please enter a valid username", response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
     }
 
     // BUG: O sistema, ao editar usuario informando campos vazios, retorna status 200 diferente do comportamento esperado.
@@ -120,28 +128,31 @@ public class UserTest {
     public void testTentarEditarUsuarioComDadosVazios() {
         UserModel newUser = UserDataFactory.userEmptyFields();
 
-        String message = userClient.putUser(user, newUser)
+        UserResponse response = userClient.putUser(user, newUser)
             .then()
-                .statusCode(400)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals("All fields are required", message);
+        Assertions.assertEquals("All fields are required", response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
     }
 
     @Test
     public void testExcluirUsuarioComSucesso() {
-        String message = userClient.deleteUser(user)
+        UserResponse response = userClient.deleteUser(user)
             .then()
-                .statusCode(200)
-                .extract().path("message");
+                .statusCode(HttpStatus.SC_OK)
+                .extract().response().body().as(UserResponse.class);
 
-        Assertions.assertEquals(user.getUsername(), message);
+        Assertions.assertEquals(user.getUsername(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.SC_OK, response.getCode());
     }
 
     @Test
     public void testTentarExcluirUsuarioComUsernameNaoCadastrado() {
-        userClient.deleteUserByUsernameNaoCadastrado()
+       userClient.deleteUserByUsernameNaoCadastrado()
             .then()
-                .statusCode(404);
+                .statusCode(HttpStatus.SC_NOT_FOUND);
+
     }
 }
