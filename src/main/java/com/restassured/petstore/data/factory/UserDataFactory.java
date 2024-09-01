@@ -26,7 +26,7 @@ public class UserDataFactory {
     public static UserModel userEmptyFields() {
         UserModel user = new UserModel();
 
-        user.setId(faker.number().numberBetween(10000, 25000));
+        user.setId(faker.number().numberBetween(10000L, 25000L));
         user.setUsername("");
         user.setFirstName("");
         user.setLastName("");
@@ -41,7 +41,7 @@ public class UserDataFactory {
     private static UserModel newUser() {
         UserModel user = new UserModel();
 
-        user.setId(faker.number().numberBetween(10000, 25000));
+        user.setId(faker.number().numberBetween(10000L, 25000L));
         user.setUsername(faker.name().username());
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());

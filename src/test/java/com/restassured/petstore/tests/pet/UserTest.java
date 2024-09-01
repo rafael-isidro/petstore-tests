@@ -3,10 +3,9 @@ package com.restassured.petstore.tests.pet;
 import com.restassured.petstore.client.UserClient;
 import com.restassured.petstore.data.factory.UserDataFactory;
 import com.restassured.petstore.model.UserModel;
-import com.restassured.petstore.model.response.UserResponse;
+import com.restassured.petstore.model.response.GenericResponse;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,10 +42,10 @@ public class UserTest {
     public void testCadastrarUsuarioComSucesso() {
         UserModel user = UserDataFactory.validUser();
 
-        UserResponse response = userClient.postUser(user)
+        GenericResponse response = userClient.postUser(user)
             .then()
                 .statusCode(HttpStatus.SC_OK)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals(user.getId().toString(), response.getMessage());
     }
@@ -56,11 +55,11 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComUsernameNulo() {
         UserModel user = UserDataFactory.userNullUsername();
 
-        UserResponse response = userClient.postUser(user)
+        GenericResponse response = userClient.postUser(user)
             .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .log().all()
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("Please enter a valid username", response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
@@ -71,10 +70,10 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComDadosVazios() {
         UserModel user = UserDataFactory.userEmptyFields();
 
-        UserResponse response = userClient.postUser(user)
+        GenericResponse response = userClient.postUser(user)
             .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("All fields are required", response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
@@ -85,10 +84,10 @@ public class UserTest {
     public void testTentarCadastrarUsuarioComTelefoneInvalido() {
         UserModel user = UserDataFactory.userInvalidPhone();
 
-        UserResponse response = userClient.postUser(user)
+        GenericResponse response = userClient.postUser(user)
             .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("Please enter a valid phone number", response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
@@ -99,10 +98,10 @@ public class UserTest {
         UserModel newUser = UserDataFactory.validUser();
         newUser.setId(user.getId());
 
-        UserResponse response = userClient.putUser(user, newUser)
+        GenericResponse response = userClient.putUser(user, newUser)
             .then()
                 .statusCode(HttpStatus.SC_OK)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals(newUser.getId().toString(), response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_OK, response.getCode());
@@ -114,10 +113,10 @@ public class UserTest {
         UserModel newUser = UserDataFactory.userNullUsername();
         newUser.setId(user.getId());
 
-        UserResponse response = userClient.putUser(user, newUser)
+        GenericResponse response = userClient.putUser(user, newUser)
             .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("Please enter a valid username", response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
@@ -128,10 +127,10 @@ public class UserTest {
     public void testTentarEditarUsuarioComDadosVazios() {
         UserModel newUser = UserDataFactory.userEmptyFields();
 
-        UserResponse response = userClient.putUser(user, newUser)
+        GenericResponse response = userClient.putUser(user, newUser)
             .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("All fields are required", response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, response.getCode());
@@ -139,10 +138,10 @@ public class UserTest {
 
     @Test
     public void testExcluirUsuarioComSucesso() {
-        UserResponse response = userClient.deleteUser(user)
+        GenericResponse response = userClient.deleteUser(user)
             .then()
                 .statusCode(HttpStatus.SC_OK)
-                .extract().response().body().as(UserResponse.class);
+                .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals(user.getUsername(), response.getMessage());
         Assertions.assertEquals(HttpStatus.SC_OK, response.getCode());

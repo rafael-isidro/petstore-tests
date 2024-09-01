@@ -10,4 +10,7 @@ O Projeto contém exemplos de testes voltados para a API PetStore https://petsto
 - PUT: /user/{username} - Edita usuário por username
 - DELETE: /user/{username} - Remove usuário
 - GET: /user/login - Login de usuário
-- POST: /user - Cria usuário
+- POST: /user - Cadastra usuário
+### Pet:
+- GET: /pet/{petId} - Busca pet por ID
+- POST: /pet - Cadastra PET
