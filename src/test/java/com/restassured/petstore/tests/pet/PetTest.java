@@ -36,7 +36,7 @@ public class PetTest {
 
         PetResponse response = petClient.postPet(pet)
             .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .extract().response().body().as(PetResponse.class);
 
         Assertions.assertEquals(pet.getName(), response.getName());
@@ -49,7 +49,7 @@ public class PetTest {
 
         GenericResponse response = petClient.postPet(pet)
             .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("name is required", response.getMessage());
@@ -62,7 +62,7 @@ public class PetTest {
 
         GenericResponse response = petClient.postPet(pet)
             .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .extract().response().body().as(GenericResponse.class);
 
         Assertions.assertEquals("ID already exists", response.getMessage());
