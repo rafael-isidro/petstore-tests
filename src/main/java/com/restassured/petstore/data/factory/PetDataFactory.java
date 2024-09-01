@@ -6,9 +6,16 @@ import net.datafaker.Faker;
 public class PetDataFactory {
 
     static Faker faker = new Faker();
-
+    static Long EXISTING_ID = 9223372036854030000L;
     public static PetModel validPet() {
         return newPet();
+    }
+
+    public static PetModel petEmptyName() {
+        PetModel pet = newPet();
+        pet.setName("");
+
+        return pet;
     }
 
     public static PetModel newPet() {
@@ -25,6 +32,13 @@ public class PetDataFactory {
 
         pet.getPhotoUrls().add(faker.internet().image());
         pet.setStatus("available");
+
+        return pet;
+    }
+
+    public static PetModel petExistingId() {
+        PetModel pet = newPet();
+        pet.setId(EXISTING_ID);
 
         return pet;
     }

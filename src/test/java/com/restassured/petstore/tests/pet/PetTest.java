@@ -41,4 +41,30 @@ public class PetTest {
 
         Assertions.assertEquals(pet.getName(), response.getName());
     }
+
+    //BUG: Ao tentar cadastrar pet com nome em branco, é retornado código e body de sucesso ao invés do status 400 e mensagem de erro.
+    @Test
+    public void testTentarCadastrarPetComNomeVazio() {
+        PetModel pet = PetDataFactory.petEmptyName();
+
+        GenericResponse response = petClient.postPet(pet)
+            .then()
+                .statusCode(400)
+                .extract().response().body().as(GenericResponse.class);
+
+        Assertions.assertEquals("name is required", response.getMessage());
+    }
+
+    //BUG: Ao tentar cadastrar pet com id já existente retorna codigo e mensagem de sucesso.
+    @Test
+    public void testTentarCadastrarPetComIdExistente() {
+        PetModel pet = PetDataFactory.petExistingId();
+
+        GenericResponse response = petClient.postPet(pet)
+            .then()
+                .statusCode(400)
+                .extract().response().body().as(GenericResponse.class);
+
+        Assertions.assertEquals("ID already exists", response.getMessage());
+    }
 }
