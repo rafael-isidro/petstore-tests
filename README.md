@@ -14,3 +14,4 @@ O Projeto contém exemplos de testes voltados para a API PetStore https://petsto
 ### Pet:
 - GET: /pet/{petId} - Busca pet por ID
 - POST: /pet - Cadastra PET
+- PUT: /pet - Edita PET

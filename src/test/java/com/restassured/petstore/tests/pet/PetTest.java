@@ -67,4 +67,56 @@ public class PetTest {
 
         Assertions.assertEquals("ID already exists", response.getMessage());
     }
+
+    @Test
+    public void testAtualizarPetComSucesso() {
+        PetModel pet = PetDataFactory.validPet();
+
+        PetResponse response = petClient.updatePet(pet)
+            .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract().response().body().as(PetResponse.class);
+
+        Assertions.assertEquals(pet.getName(), response.getName());
+    }
+
+    //BUG: Ao tentar atualizar pet com ID não existente ele cria um novo
+    @Test
+    public void testTentarAtualizarPetComIdInexistente() {
+        PetModel pet = PetDataFactory.validPet();
+
+        GenericResponse response = petClient.updatePetByNonExistingId(pet)
+            .then()
+                .statusCode(HttpStatus.SC_NOT_FOUND)
+                .extract().response().body().as(GenericResponse.class);
+
+        Assertions.assertEquals("Pet not found", response.getMessage());
+    }
+
+    //BUG: Ao tentar atualizar pet com ID inválido ele cria um novo
+    @Test
+    public void testTentarAtualizarPetComIdInvalido() {
+        PetModel pet = PetDataFactory.validPet();
+
+        GenericResponse response = petClient.updatePetByInvalidId(pet)
+            .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(GenericResponse.class);
+
+        Assertions.assertEquals("Invalid pet ID", response.getMessage());
+    }
+
+    //BUG: Ao tentar atualizar pet com valor em status diferente do enum [ available, pending, sold ], cria um novo
+    @Test
+    public void testTentarAtualizarPetComStatusInvalido() {
+        PetModel pet = PetDataFactory.validPet();
+
+        GenericResponse response = petClient.updatePetInvalidStatus(pet)
+            .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().response().body().as(GenericResponse.class);
+
+        Assertions.assertEquals("Invalid status", response.getMessage());
+    }
+
 }
