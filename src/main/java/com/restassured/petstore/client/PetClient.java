@@ -39,7 +39,6 @@ public class PetClient extends BaseClient {
             given()
                 .spec(super.set())
                 .contentType(ContentType.JSON)
-                .pathParams("id", VALID_ID)
                 .body(pet)
             .when()
                 .post(PET);
